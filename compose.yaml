@@ -1,0 +1,17 @@
+services:
+  cursos-bio-front:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: "${NEXT_PUBLIC_API_URL:-http://localhost:13031}"
+    image: cursos-bio-front:local
+    restart: unless-stopped
+    ports:
+      - "${FRONT_BIND_IP:-0.0.0.0}:${FRONT_PORT:-13030}:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 45s

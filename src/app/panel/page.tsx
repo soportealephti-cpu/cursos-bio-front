@@ -46,7 +46,7 @@ export default function Panel() {
   useEffect(()=>{function sync(){setSection(window.location.pathname==="/gestion-usuarios"?"usuarios":"inicio");}sync();window.addEventListener("popstate",sync);return()=>window.removeEventListener("popstate",sync);},[]);
   if(!user)return <main className="grid min-h-dvh place-items-center bg-slate-50 p-6"><div className="text-center text-sm text-slate-600">{error?<><p role="alert">{error}</p><button onClick={()=>router.replace("/login")} className="mt-4 font-semibold text-emerald-700">Volver al inicio de sesión</button></>:<><div className="mx-auto mb-4 size-8 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent"/>Verificando sesión…</>}</div></main>;
   const admin=user.role==="SA"||user.role==="ADMIN";
-  const nav: {id:Section;icon:typeof LayoutDashboard}[] = [{id:"inicio",icon:LayoutDashboard},{id:"cursos",icon:BookOpen},...(admin?[{id:"estudiantes" as const,icon:Users},{id:"usuarios" as const,icon:Users}]:[]),{id:"evaluaciones",icon:ClipboardList},{id:"certificados",icon:Award}];
+  const nav: {id:Section;icon:typeof LayoutDashboard}[] = [{id:"inicio",icon:LayoutDashboard},{id:"cursos",icon:BookOpen},{id:"evaluaciones",icon:ClipboardList},{id:"certificados",icon:Award}];
   const cards = [{id:"cursos" as const,title:admin?"Cursos":"Mis cursos",icon:BookOpen},{id:"estudiantes" as const,title:"Estudiantes",icon:GraduationCap},{id:"evaluaciones" as const,title:"Evaluaciones",icon:ClipboardList},{id:"certificados" as const,title:"Certificados",icon:Award}].filter(c=>admin||c.id!=="estudiantes");
   return (
     <div className="min-h-dvh bg-[#f4f7f6] text-slate-900">

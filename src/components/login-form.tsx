@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Mail, LockKeyhole, Eye, EyeOff, ShieldCheck, GraduationCap, Clock3, ArrowRight, Info } from "lucide-react";
 
@@ -12,16 +13,28 @@ const features = [
 
 export default function LoginForm() {
   const [visible, setVisible] = useState(false);
-  const [notice, setNotice] = useState(false);
+  const [notice, setNotice] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setNotice(true);
+    const data = new FormData(event.currentTarget);
+    setNotice(""); setLoading(true);
+    try {
+      const response = await fetch((process.env.NEXT_PUBLIC_API_URL || "https://api.cursos.bioelectronsac.com") + "/api/v1/auth/login", {
+        method: "POST", credentials: "include", headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({correo: data.get("correo"), password: data.get("password")})
+      });
+      if (!response.ok) { setNotice(response.status === 401 ? "Correo o contraseña incorrectos." : "No se pudo iniciar sesión."); return; }
+      router.replace("/panel");
+    } catch { setNotice("No se pudo conectar con el servidor."); }
+    finally { setLoading(false); }
   }
 
   return (
     <main className="relative isolate flex min-h-dvh flex-col overflow-hidden bg-[#092e40] text-white">
-      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_left,#079d59_0%,transparent_55%),radial-gradient(ellipse_at_bottom_right,#1554a0_0%,transparent_60%),linear-gradient(135deg,#073d35,#0b2445)]"/>
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-cover bg-center" style={{backgroundImage: "linear-gradient(to bottom, rgba(22,163,74,.80), rgba(37,99,235,.80)), url('https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&w=1950&q=80')"}}/>
       <div aria-hidden="true" className="absolute inset-0 -z-10 opacity-[0.07] [background-image:linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] [background-size:48px_48px]"/>
       <div className="flex flex-1 items-center justify-center px-5 py-10 sm:py-16">
         <div className="w-full max-w-[460px]">
@@ -34,7 +47,7 @@ export default function LoginForm() {
               <h1 id="login-title" className="text-3xl font-bold tracking-tight">¡Bienvenido!</h1>
               <p className="mt-2 text-sm leading-relaxed text-slate-500">Ingresa a tu cuenta para acceder a los cursos.</p>
             </div>
-            <form onSubmit={submit} onChange={() => setNotice(false)} className="space-y-5">
+            <form onSubmit={submit} onChange={() => setNotice("")} className="space-y-5">
               <div>
                 <label htmlFor="correo" className="mb-2 block text-sm font-semibold text-slate-700">Correo electrónico</label>
                 <div className="relative">
@@ -52,9 +65,9 @@ export default function LoginForm() {
                   </button>
                 </div>
               </div>
-              {notice && <div role="status" className="flex gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900"><Info className="mt-0.5 size-4 shrink-0"/>El inicio de sesión aún no está habilitado. No se han enviado tus credenciales.</div>}
-              <button type="submit" className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#008b43] text-sm font-semibold text-white shadow-sm transition hover:bg-[#007438] focus-visible:ring-4 focus-visible:ring-emerald-200">
-                Iniciar sesión <ArrowRight size={18} aria-hidden="true"/>
+              {notice && <div role="status" className="flex gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900"><Info className="mt-0.5 size-4 shrink-0"/>{notice}</div>}
+              <button type="submit" disabled={loading} className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#008b43] text-sm font-semibold text-white shadow-sm transition hover:bg-[#007438] focus-visible:ring-4 focus-visible:ring-emerald-200">
+                {loading ? "Ingresando..." : "Iniciar sesión"} <ArrowRight size={18} aria-hidden="true"/>
               </button>
             </form>
             <div className="mt-7 grid grid-cols-3 gap-2 border-t border-slate-100 pt-6">

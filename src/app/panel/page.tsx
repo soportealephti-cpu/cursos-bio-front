@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LogOut, ShieldCheck } from "lucide-react";
-const api = process.env.NEXT_PUBLIC_API_URL || "https://api.cursos.bioelectronsac.com";
+const api = "https://api.cursos.bioelectronsac.com";
 export default function Panel() {
  const router=useRouter();
  const [user,setUser]=useState<{email:string;role:string}|null>(null);

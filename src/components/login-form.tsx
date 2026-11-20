@@ -22,7 +22,7 @@ export default function LoginForm() {
     const data = new FormData(event.currentTarget);
     setNotice(""); setLoading(true);
     try {
-      const response = await fetch((process.env.NEXT_PUBLIC_API_URL || "https://api.cursos.bioelectronsac.com") + "/api/v1/auth/login", {
+      const response = await fetch("https://api.cursos.bioelectronsac.com" + "/api/v1/auth/login", {
         method: "POST", credentials: "include", headers: {"Content-Type":"application/json"},
         body: JSON.stringify({correo: data.get("correo"), password: data.get("password")})
       });

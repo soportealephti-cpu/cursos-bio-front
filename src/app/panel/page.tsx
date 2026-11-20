@@ -6,6 +6,7 @@ import UserManagement from "@/components/user-management";
 import CourseManagement from "@/components/course-management";
 import ExamManagement from "@/components/exam-management";
 import CertificateManagement from "@/components/certificate-management";
+import Dashboard from "@/components/dashboard";
 import { useRouter } from "next/navigation";
 import { LayoutDashboard, BookOpen, Users, GraduationCap, ClipboardList, Award, Bell, ChevronDown, LogOut, UserRound, Menu, X, ShieldCheck, Settings, BookOpenCheck, ArrowRight } from "lucide-react";
 
@@ -45,7 +46,7 @@ export default function Panel() {
     try{const r=await fetch(api+"/api/v1/auth/logout",{method:"POST",credentials:"include"});if(!r.ok)throw Error();router.replace("/login");}
     catch{setError("No se pudo cerrar la sesión.");setLeaving(false);}
   }
-  function navigate(next:Section){setSection(next);setDropdown(false);setMobile(false);const path=next==="usuarios"?"/gestion-usuarios":next==="cursos"?"/cursos":next==="evaluaciones"?"/evaluaciones":next==="certificados"?"/certificados":"/panel";if(window.location.pathname!==path)window.history.pushState(null,"",path);}
+  function navigate(next:Section){setSection(next);setDropdown(false);setMobile(false);const path=next==="usuarios"?"/gestion-usuarios":next==="cursos"?"/cursos":next==="evaluaciones"?"/evaluaciones":next==="certificados"?"/certificados":next==="inicio"?"/dashboard":"/panel";if(window.location.pathname!==path)window.history.pushState(null,"",path);}
   useEffect(()=>{function sync(){setSection(window.location.pathname==="/gestion-usuarios"?"usuarios":window.location.pathname==="/cursos"?"cursos":window.location.pathname==="/evaluaciones"?"evaluaciones":window.location.pathname==="/certificados"?"certificados":"inicio");}sync();window.addEventListener("popstate",sync);return()=>window.removeEventListener("popstate",sync);},[]);
   if(!user)return <main className="grid min-h-dvh place-items-center bg-slate-50 p-6"><div className="text-center text-sm text-slate-600">{error?<><p role="alert">{error}</p><button onClick={()=>router.replace("/login")} className="mt-4 font-semibold text-emerald-700">Volver al inicio de sesión</button></>:<><div className="mx-auto mb-4 size-8 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent"/>Verificando sesión…</>}</div></main>;
   const admin=user.role==="SA"||user.role==="ADMIN";
@@ -86,7 +87,7 @@ export default function Panel() {
         <main className="w-full px-4 py-7 sm:px-8 sm:py-8">
           {error&&<p role="alert" className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
           <div className="mb-7"><p className="mb-2 text-[11px] font-bold uppercase tracking-[.18em] text-emerald-700">Gestión académica</p><h1 className="text-3xl font-bold tracking-tight">{section==="inicio"?"Panel de inicio":labels[section]}</h1><p className="mt-2 text-sm text-slate-500">{section==="inicio"?"Bienvenido a la plataforma de formación BIOELECTRON.":section==="perfil"?"Información de tu cuenta.":"Área de gestión del campus virtual."}</p></div>
-          {section==="inicio"?<>
+          {section==="inicio"&&admin?<Dashboard email={user.email} navigate={navigate}/>:section==="inicio"?<>
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               {cards.map(({id,title,icon:Icon})=><button key={id} onClick={()=>navigate(id)} className="rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:border-emerald-300 hover:shadow-md"><div className="flex items-center justify-between gap-2"><span className="text-sm font-medium text-slate-600">{title}</span><span className="grid size-10 place-items-center rounded-xl bg-emerald-50 text-emerald-700"><Icon size={21}/></span></div><p className="mt-3 text-lg font-semibold">Ver módulo</p><p className="mt-1 flex items-center gap-2 text-xs text-emerald-700">Acceder <ArrowRight size={13}/></p></button>)}
             </div>

@@ -70,6 +70,7 @@ export default function LoginForm() {
                 {loading ? "Ingresando..." : "Iniciar sesión"} <ArrowRight size={18} aria-hidden="true"/>
               </button>
             </form>
+            <a href="/recuperar" className="mt-4 block text-center text-sm font-semibold text-emerald-700 hover:underline">¿Olvidaste tu contraseña?</a>
             <div className="mt-7 grid grid-cols-3 gap-2 border-t border-slate-100 pt-6">
               {features.map(({icon: Icon,label}) => <div key={label} className="flex flex-col items-center gap-2 text-center"><span className="grid size-10 place-items-center rounded-xl bg-emerald-50 text-emerald-700"><Icon size={20} aria-hidden="true"/></span><span className="text-xs font-medium leading-tight text-slate-600">{label}</span></div>)}
             </div>

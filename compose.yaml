@@ -5,7 +5,8 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: "${NEXT_PUBLIC_API_URL:-http://localhost:13031}"
-    image: cursos-bio-front:local
+    pull_policy: build
+    container_name: cursos-bio-front
     restart: unless-stopped
     ports:
       - "${FRONT_BIND_IP:-0.0.0.0}:${FRONT_PORT:-13030}:3000"

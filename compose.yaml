@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: "${NEXT_PUBLIC_API_URL:-http://localhost:13031}"
+        NEXT_PUBLIC_API_URL: "https://api.cursos.bioelectronsac.com"
     pull_policy: build
     container_name: cursos-bio-front
     restart: unless-stopped
